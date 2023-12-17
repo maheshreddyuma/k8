@@ -1,0 +1,42 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+ENV['VAGRANT_NO_PARALLEL'] = 'yes'
+
+Vagrant.configure(2) do |config|
+
+  config.vm.provision "shell", path: "bootstrap.sh"
+
+  # Define the master1 machine
+  config.vm.define "master1" do |master1|
+    master1.vm.box = "generic/rhel8"
+    master1.vm.network "private_network", ip: "172.16.16.10"
+
+    master1.vm.provider "virtualbox" do |vb|
+      vb.memory = "2048"  # 2 GB RAM
+      vb.cpus = 2         # 2 CPUs
+    end
+  end
+
+  # Define the worker1 machine
+  config.vm.define "worker1" do |worker1|
+    worker1.vm.box = "generic/rhel8"
+    worker1.vm.network "private_network", ip: "172.16.16.11"
+
+    worker1.vm.provider "virtualbox" do |vb|
+      vb.memory = "2048"  # 2 GB RAM
+      vb.cpus = 2         # 2 CPUs
+    end
+  end
+
+  # Define the worker2 machine
+  config.vm.define "worker2" do |worker2|
+    worker2.vm.box = "generic/rhel8"
+    worker2.vm.network "private_network", ip: "172.16.16.12"
+
+    worker2.vm.provider "virtualbox" do |vb|
+      vb.memory = "2048"  # 2 GB RAM
+      vb.cpus = 2         # 2 CPUs
+    end
+  end
+end
