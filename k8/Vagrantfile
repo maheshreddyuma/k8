@@ -3,40 +3,37 @@
 
 ENV['VAGRANT_NO_PARALLEL'] = 'yes'
 
-Vagrant.configure(2) do |config|
+# Set the number of master and worker nodes
+num_masters = 1
+num_workers = 2
 
+Vagrant.configure(2) do |config|
   config.vm.provision "shell", path: "bootstrap.sh"
 
-  # Define the master1 machine
-  config.vm.define "master1" do |master1|
-    master1.vm.box = "generic/rhel8"
-    master1.vm.network "private_network", ip: "172.16.16.10"
+  # Define machines dynamically
+  (1..num_masters).each do |i|
+    config.vm.define "master#{i}" do |master|
+      master.vm.box = "generic/rhel8"
+      master.vm.network "private_network", ip: "172.16.16.#{10 + i}"
+      master.vm.hostname = "master#{i}.example.com"
 
-    master1.vm.provider "virtualbox" do |vb|
-      vb.memory = "2048"  # 2 GB RAM
-      vb.cpus = 2         # 2 CPUs
+      master.vm.provider "virtualbox" do |vb|
+        vb.memory = "2048"  # 2 GB RAM
+        vb.cpus = 2         # 2 CPUs
+      end
     end
   end
 
-  # Define the worker1 machine
-  config.vm.define "worker1" do |worker1|
-    worker1.vm.box = "generic/rhel8"
-    worker1.vm.network "private_network", ip: "172.16.16.11"
+  (1..num_workers).each do |i|
+    config.vm.define "worker#{i}" do |worker|
+      worker.vm.box = "generic/rhel8"
+      worker.vm.network "private_network", ip: "172.16.16.#{20 + num_masters + i}"
+      worker.vm.hostname = "worker#{i}.example.com"
 
-    worker1.vm.provider "virtualbox" do |vb|
-      vb.memory = "2048"  # 2 GB RAM
-      vb.cpus = 2         # 2 CPUs
-    end
-  end
-
-  # Define the worker2 machine
-  config.vm.define "worker2" do |worker2|
-    worker2.vm.box = "generic/rhel8"
-    worker2.vm.network "private_network", ip: "172.16.16.12"
-
-    worker2.vm.provider "virtualbox" do |vb|
-      vb.memory = "2048"  # 2 GB RAM
-      vb.cpus = 2         # 2 CPUs
+      worker.vm.provider "virtualbox" do |vb|
+        vb.memory = "2048"  # 2 GB RAM
+        vb.cpus = 2         # 2 CPUs
+      end
     end
   end
 end
