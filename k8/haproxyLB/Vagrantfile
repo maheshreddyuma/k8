@@ -4,7 +4,7 @@
 ENV['VAGRANT_NO_PARALLEL'] = 'yes'
 
 # Set the controller
-num_masters = 2
+num_masters = 3
 num_workers = 1
 
 Vagrant.configure("2") do |config|
