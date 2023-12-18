@@ -4,24 +4,12 @@
 ENV['VAGRANT_NO_PARALLEL'] = 'yes'
 
 # Set the controller
-num_masters = 3
-num_workers = 1
+num_masters = 1
+num_workers = 2
 
 Vagrant.configure("2") do |config|
   config.vm.provision "shell", path: "bootstrap.sh"
-
-     # Load Balancer Node
-
-  config.vm.define "control" do |control|
-    control.vm.box = "generic/centos8"
-    control.vm.network "private_network", ip: "172.16.16.30"
-    control.vm.hostname = "control.example.com"
-
-    control.vm.provider "virtualbox" do |vb|
-      vb.memory = "1024"  # 1 GB RAM
-      vb.cpus = 1        # 1 CPUs
-    end
-  end
+  config.vm.provision "shell", path: "common.sh"
 
   # Define master machines dynamically
   (1..num_masters).each do |i|
@@ -45,8 +33,8 @@ Vagrant.configure("2") do |config|
       worker.vm.hostname = "worker#{i}.example.com"
 
       worker.vm.provider "virtualbox" do |vb|
-        vb.memory = "1024"  # 2 GB RAM
-        vb.cpus = 1       # 2 CPUs
+        vb.memory = "2048"  # 2 GB RAM
+        vb.cpus = 2       # 2 CPUs
       end
     end
   end
